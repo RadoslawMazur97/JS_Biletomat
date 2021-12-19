@@ -9,11 +9,11 @@ window = Tk()
 
 
 class my_ticket:
-    Ticket_label = Label
-    counter_disp = Label
-    ticket_add = Button
-    ticket_substract = Button
-    ticket_counter = IntVar()
+    _Ticket_label = Label
+    _counter_disp = Label
+    _ticket_add = Button
+    _ticket_substract = Button
+    _ticket_counter = IntVar()
 
     def __init__(self, bilet_name, my_row, my_col):
         self.ticket_counter = IntVar()
@@ -26,19 +26,30 @@ class my_ticket:
                                   relief="raised",
                                   bg="Gray"
                                   )
-        self.counter_disp = Label(window, padx=2, pady=2, textvariable=self.ticket_counter)
-        self.ticket_add = Button(window,
-                            text="+",
-                            command=self.onClick_addfun,
-                            borderwidth=5,
-                            relief="raised",
-                            bg="Gray"
+        self.counter_disp = Label(window,
+                                  padx=2,
+                                  pady=2,
+                                  textvariable=self.ticket_counter,
+                                  borderwidth=5,
+                                  relief="groove",
+                                  bg="Gray"
 
-                            )
-        self.ticket_substract = Button(window,
-                                  text="-",
-                                  command=self.onClick_substract,
                                   )
+        self.ticket_add = Button(window,
+                                 text="+",
+                                 command=self.onClick_addfun,
+                                 borderwidth=5,
+                                 relief="raised",
+                                 bg="Gray"
+
+                                 )
+        self.ticket_substract = Button(window,
+                                text="-",
+                                command=self.onClick_substract,
+                                borderwidth=5,
+                                relief="raised",
+                                bg="Gray"
+                                       )
         print("Utworzono")
 
     def onClick_addfun(self, event=None):
@@ -76,15 +87,14 @@ def Bilety_Ulgowe(lista):
     c.aktywuj()
     tmp = [d, e, f, a, b, c]
     normalne = Button(window,
-                        text="Bilety Normalne",
-                        # command=print(Bilet20min_ulg.ticket_counter.get())
-                        #  command= Bilety_Ulgowe
-                        command=lambda: Bilety_Normalne(tmp)
-                        ).grid(row=3, column=0, sticky="NSEW", padx=2, pady=20)
+                      text="Bilety Normalne",
+                      command=lambda: Bilety_Normalne(tmp)
+                      ).grid(row=3, column=0, sticky="NSEW", padx=2, pady=20)
     platnosc = Button(window,
-                        text="Platnosc",
-                        command=lambda: Summary(lista,True)
-                        ).grid(row=3, column=1, sticky="NSEW",columnspan=3, padx=2, pady=20)
+                      text="Platnosc",
+                      command=lambda: Summary(lista, True)
+                      ).grid(row=3, column=1, sticky="NSEW", columnspan=3, padx=2, pady=20)
+
 
 def Bilety_Normalne(lista):
     a, b, c, d, e, f = lista
@@ -96,56 +106,52 @@ def Bilety_Normalne(lista):
     c.aktywuj()
     tmp = [d, e, f, a, b, c]
     ulgowe = Button(window,
-                        text="Bilety Ulgowe",
-                        # command=print(Bilet20min_ulg.ticket_counter.get())
-                        #  command= Bilety_Ulgowe
-                        command=lambda: Bilety_Ulgowe(tmp)
-                        ).grid(row=3, column=0, sticky="NSEW", padx=2, pady=20)
+                    text="Bilety Ulgowe",
+                    command=lambda: Bilety_Ulgowe(tmp)
+                    ).grid(row=3, column=0, sticky="NSEW", padx=2, pady=20)
     Platnosc = Button(window,
-                        text="Platnosc",
-                        command=lambda: Summary(lista,False)
-                        ).grid(row=3, column=1, sticky="NSEW",columnspan=3, padx=2, pady=20)
+                      text="Platnosc",
+                      command=lambda: Summary(lista, False)
+                      ).grid(row=3, column=1, sticky="NSEW", columnspan=3, padx=2, pady=20)
+
 
 def widget_forget():
     for i in window.grid_slaves():
         i.grid_forget()
-        # i.grid()
-   # if flaga == True:
-  #      Bilety_Normalne()
- #   else:
-  #      Bilety_Ulgowe()
-
 
 def clear_widgets():
     for widget in window.winfo_children():
         widget.destroy()
 
-def Summary(lista,flaga):
+
+def Summary(lista, flaga):
     widget_forget()
     sum = DoubleVar()
     a, b, c, d, e, f = lista
-    if(flaga==True):
-        a=a.ticket_counter.get()*price_20_minutes/2
-        b=b.ticket_counter.get()*price_40_minutes/2
-        c=c.ticket_counter.get()*price_60_minutes/2
-        d=d.ticket_counter.get()*price_20_minutes
-        e=e.ticket_counter.get()*price_40_minutes
-        f=f.ticket_counter.get()*price_60_minutes
-        tmp=[a,b,c,d,e,f]
-    elif(flaga==False)    :
-        a=a.ticket_counter.get()*price_20_minutes
-        b=b.ticket_counter.get()*price_40_minutes
-        c=c.ticket_counter.get()*price_60_minutes
-        d=d.ticket_counter.get()*price_20_minutes/2
-        e=e.ticket_counter.get()*price_40_minutes/2
-        f=f.ticket_counter.get()*price_60_minutes/2
-        tmp=[a, b, c, d, e, f]
+    if (flaga == True):
+        a = a.ticket_counter.get() * price_20_minutes / 2
+        b = b.ticket_counter.get() * price_40_minutes / 2
+        c = c.ticket_counter.get() * price_60_minutes / 2
+        d = d.ticket_counter.get() * price_20_minutes
+        e = e.ticket_counter.get() * price_40_minutes
+        f = f.ticket_counter.get() * price_60_minutes
+        tmp = [a, b, c, d, e, f]
+    elif (flaga == False):
+        a = a.ticket_counter.get() * price_20_minutes
+        b = b.ticket_counter.get() * price_40_minutes
+        c = c.ticket_counter.get() * price_60_minutes
+        d = d.ticket_counter.get() * price_20_minutes / 2
+        e = e.ticket_counter.get() * price_40_minutes / 2
+        f = f.ticket_counter.get() * price_60_minutes / 2
+        tmp = [a, b, c, d, e, f]
     for i in tmp:
-        sum.set(sum.get()+i)
-    suma_button= Label(window, padx=2, pady=2, textvariable=sum)
-    suma_button.grid(row=0, column=0, sticky="NSEW",columnspan=3, padx=2, pady=20)
+        sum.set(sum.get() + i)
+    suma_button = Label(window, padx=2, pady=2, textvariable=sum)
+    suma_button.grid(row=0, column=0, sticky="NSEW", columnspan=3, padx=2, pady=20)
+
 
     print(sum)
+
 
 def Start():
     Bilet20min = my_ticket("Bilet 20 minutowy\n" + '{:.2f}'.format(price_20_minutes) + "zł", 0, 0, )
@@ -154,16 +160,16 @@ def Start():
     Bilet20min_ulg = my_ticket("Bilet 20 minutowy\n" + '{:.2f}'.format(price_20_minutes / 2) + "zł", 0, 0, )
     Bilet40min_ulg = my_ticket("Bilet 40 minutowy\n" + '{:.2f}'.format(price_40_minutes / 2) + "zł", 1, 0, )
     Bilet60min_ulg = my_ticket("Bilet 60 minutowy\n" + '{:.2f}'.format(price_60_minutes / 2) + "zł", 2, 0, )
-    listanormalne=[Bilet20min,Bilet40min,Bilet60min,Bilet20min_ulg,Bilet40min_ulg,Bilet60min_ulg]
-    listaulgowe=[Bilet20min_ulg,Bilet40min_ulg,Bilet60min_ulg,Bilet20min,Bilet40min,Bilet60min]
+    listanormalne = [Bilet20min, Bilet40min, Bilet60min, Bilet20min_ulg, Bilet40min_ulg, Bilet60min_ulg]
+    listaulgowe = [Bilet20min_ulg, Bilet40min_ulg, Bilet60min_ulg, Bilet20min, Bilet40min, Bilet60min]
 
     button_bilet_normalny = Button(window,
                                    text="Bilet Normalny",
-                                   command =lambda:Bilety_Normalne(listanormalne),
+                                   command=lambda: Bilety_Normalne(listanormalne),
                                    ).grid(row=0, column=0, sticky="NSEW", padx=20, pady=50)
     button_bilet_ulgowy = Button(window,
                                  text="Bilet Ulgowy",
-                                 command=lambda:Bilety_Ulgowe(listaulgowe)
+                                 command=lambda: Bilety_Ulgowe(listaulgowe)
                                  ).grid(row=0, column=1, sticky="NSEW", padx=20, pady=50)
 
 

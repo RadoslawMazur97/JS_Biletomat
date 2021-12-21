@@ -3,15 +3,7 @@ from tkinter import *
 import time
 import os
 cwd = os.getcwd()
-coins = {
-    "0,10 zl" : 0.10,
-    "0,20 zl" : 0.20,
-    "0,50 zl" : 0.50,
-    "1,00 zl" : 1,
-    "2,00 zl" : 2,
-    "5,00 zl" : 5
-
-}
+coins = ["0.10","0.20","0.50","1","2","5"]
 price_20_minutes = 4
 price_40_minutes = 7
 price_60_minutes = 8
@@ -163,22 +155,26 @@ def clear_widgets():
 
 def Summary(lista,flaga):
     
-    def display_coins():
-     for i,(key,value) in enumerate(coins.items()):
-        print(value)
+    def display_coins(czy_aktywny="normal"):
+     i=0
+     for c in coins:
         Button(window,
-                text=key,
-                command = lambda:Refresh_sum(value),
+                text="Wrzuć "+ c +" zł",
+                command = lambda c=c: Refresh_sum(float(c)),
                 bg="#231697",
                 borderwidth=5,
                 relief="raised",
                 font=myfont,
                 fg="white",
+                state = czy_aktywny
         ).grid(row=i,column=3,sticky="NSEW",padx=2,pady=20)
-        print(value)
+        i+=1
+       # print(i,key,value)
     widget_forget()
     sum = DoubleVar()
     test = StringVar()
+    reszta = StringVar()
+    reszta.set("0.00 zl")
     t=0
     a, b, c, d, e, f = lista
     if(flaga==True):
@@ -203,13 +199,21 @@ def Summary(lista,flaga):
         #t2.fromat()
         #'{:.2f}'.format(price_60_minutes)
         test.set(t2)
-        sum.set(sum.get()+i)
+        #sum.set(sum.get()+i)
     def Refresh_sum(value):
+        print(value)
         #current_sum = test.get()
         sum_float=float(test.get().split(" ")[0]) - value
         #sum_float = sum_float - value
        # current_sum='{:.2f}'.format(sum_float) + " zl"
         test.set('{:.2f}'.format(sum_float) + " zl")
+        if(sum_float) <=0:
+            display_coins("disabled")
+            test.set("0.00 zl")
+            sum_float=sum_float*-1
+            reszta.set('{:.2f}'.format(sum_float) + " zl")
+
+            
 
     suma_display_text= Label(window,
                     text="Pozostalo do zaplaty:",
@@ -229,16 +233,24 @@ def Summary(lista,flaga):
                     fg="white",
                     )
     suma_display.grid(row=2, column=1, sticky="NSEW",columnspan=2, padx=2, pady=20)
-   # button_2_zlote= Button(window,
-    #                text="2.00 zl",
-    #                bg="#231697",
-    #                borderwidth=5,
-     #               relief="raised",
-     #               font=myfont,
-     #               fg="white",
-     #               command =lambda: Refresh_sum(2)
-     #               )
-    #button_2_zlote.grid(row=0, column=3, sticky="NSEW",columnspan=2, padx=2, pady=20)
+    reszta_display_text= Label(window,
+                    text="Reszta:",
+                    bg="#231697",
+                    borderwidth=5,
+                    relief="raised",
+                    font=myfont,
+                    fg="white",
+                    )
+    reszta_display_text.grid(row=3, column=1, sticky="NSEW",columnspan=2, padx=2, pady=20)
+    reszta_display= Label(window,
+                    textvariable=reszta,
+                    bg="#231697",
+                    borderwidth=5,
+                    relief="raised",
+                    font=myfont,
+                    fg="white",
+                    )
+    reszta_display.grid(row=4, column=1, sticky="NSEW",columnspan=2, padx=2, pady=20)
     display_coins()
     print(sum)
 

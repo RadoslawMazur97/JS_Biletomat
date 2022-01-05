@@ -29,6 +29,8 @@ class PrzechowywaczMonet:
         return tmp
 l=[random.choice(listadowzwolonych) for x in range(100)] #Randomowa lista nominalow znajdujacych sie w biletomacie
 Biletomat=PrzechowywaczMonet(l)
+tmp_l=[]
+WrzuconeMonety=PrzechowywaczMonet(tmp_l)
 
 cwd = os.getcwd()
 coins = ["0.10", "0.20", "0.50", "1", "2", "5"]
@@ -186,8 +188,6 @@ def clear_widgets():
 
 
 def Summary(lista, flaga):
-    tmp_l=[]
-    WrzuconeMonety=PrzechowywaczMonet(tmp_l)
     def display_coins(czy_aktywny="normal"):
         i = 0
         for c in coins:
@@ -202,7 +202,6 @@ def Summary(lista, flaga):
                    state=czy_aktywny
                    ).grid(row=i, column=3, sticky="NSEW", padx=2, pady=20)
             i += 1
-        # print(i,key,value)
 
     widget_forget()
     sum = DoubleVar()
@@ -227,33 +226,21 @@ def Summary(lista, flaga):
         e = e.ticket_counter.get() * price_40_minutes / 2
         f = f.ticket_counter.get() * price_60_minutes / 2
         tmp = [a, b, c, d, e, f]
+    tmp_sum=WrzuconeMonety.lacznaSuma()
+    print("Laczna sumna tmp_Sum")
+    print(tmp_sum) 
     for i in tmp:
         t = t + i
-        t2 = '{:.2f}'.format(t) + " zl"
-        # t2.fromat()
-        # '{:.2f}'.format(price_60_minutes)
-        test.set(t2)
-        # sum.set(sum.get()+i)
 
+    t=t-float(tmp_sum)
+    t2 = '{:.2f}'.format(t) + " zl"
+    test.set(t2)
     def Refresh_sum(value):
-        Dodaj_Bilet = Button(window,
-                            text="Dodaj Bilet",
-                            command=lambda: Start(listanormalne, listaulgowe),
-                            bg="#231697",
-                            borderwidth=5,
-                            relief="raised",
-                            font=myfont,
-                            fg="white",
-                            state="disabled"
-                            )
-        Dodaj_Bilet.grid(row=0, column=0, sticky="NSEW", padx=2, pady=20)
+
         print(value)
         WrzuconeMonety.dodajMonete(value)
-        WrzuconeMonety.lacznaSuma()
-        # current_sum = test.get()
+        print(tmp_sum)
         sum_float = float(test.get().split(" ")[0]) - value
-        # sum_float = sum_float - value
-        # current_sum='{:.2f}'.format(sum_float) + " zl"
         test.set('{:.2f}'.format(sum_float) + " zl")
         if (sum_float) <= 0:
             display_coins("disabled")

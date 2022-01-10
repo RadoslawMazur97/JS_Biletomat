@@ -172,8 +172,12 @@ def WydajReszte(Biletomat,reszta):
     for i in listamonet:
         l.append(i.get_wartosc())
     l.sort(reverse=True)
+
     print(l)
     for i in l:
+        reszta=round(reszta,2)
+        i=round(i,2)
+        #print(i.compare(reszta))
         if i <= reszta:
             print("printuje i")
             print(float(i))

@@ -255,7 +255,7 @@ def wyswietnormalne(list, tmp_list_tickets):
 
 
 def Bilety_Normalne(list):
-    a, b, c, d, e, f = list  # Unpack list of tickets
+    a, b, c, d, e, f, *_ = list  # Unpack list of tickets
     widget_forget()  # forget previous buttons
     a.activate()
     b.activate()
@@ -369,10 +369,13 @@ def Refresh_sum(value, coins_counter, sum_string, change):  # function to refres
                 WrzuconeMonety.return_Nominal(k.get_value())
 def finish(text):
     tmp =[]
-    change_info_text =StringVar()
-    for l in text:
-        tmp = str(l) + " zł"
+    l = "Wydano Reszte: "
+    change_info_text = StringVar()
+    for k in text:
+        tmp.append(str(k)+" zl")
+    tmp.insert(0,"Wydano reszte:\n")
    # tmp.insert(0,"Wydano reszte: ")
+    print(l)
     change_info_text.set(tmp)
     change_info = Label(window,
                         textvariable=change_info_text,
@@ -527,7 +530,7 @@ def Summary(lista, flaga):
     coins_counter = IntVar()
     coins_counter.set(1)
     widget_forget()
-    a, b, c, d, e, f = lista
+    a, b, c, d, e, f, *_ = lista
     sum = DoubleVar()
     sum_string = StringVar()
     change = StringVar()

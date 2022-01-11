@@ -7,79 +7,87 @@ from decimal import *
 import copy
 import random
 
-listadowzwolonych = [0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1, 2, 5, 10, 20, 50]
+allowed_coins_bills = [0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1, 2, 5, 10, 20, 50]
+
+
 class ZlyNominalExcepion(Exception):
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
         return repr(self.value)
+
 
 class NieznanaWalutaException(Exception):
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
         return repr(self.value)
 
-class Moneta:
-    __waluta = 'PLN'
-    __wartosc = 0
+
+class Coin_Bill:
+    __currency = 'PLN'
+    __value = 0
 
     def __init__(self, val):
-        allowed = [0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1, 2, 5, 10, 20, 50]
-        if val in allowed:
-           # print(val)
-            self.__wartosc = Decimal(val)
+        if val in allowed_coins_bills:
+            self.__value = Decimal(val)
         else:
             raise ZlyNominalExcepion('Brak takiego nominalu')
 
-    def get_wartosc(self):
-        return self.__wartosc
+    def get_value(self):
+        return self.__value
 
     def get_waluta(self):
-        return self.__waluta
+        return self.__currency
 
 
-class PrzechowywaczMonet:
-    __lista = []
-    lista2 =[]
-    def __init__(self, obsluga,l):
-        self.__obsluga = obsluga
-        self.__lista=l
+class Money_Storage:
+    __Money_list = []
 
-    def dodajMonete(self, moneta):
-        if isinstance(moneta, Moneta):
-            if moneta.get_waluta() in self.__obsluga:
-                self.__lista.append(moneta)
+    def __init__(self, currency, l):
+        self.__curr = currency
+        self.__Money_list = l
+
+    def add_Coin_or_Bill(self, Coin_or_Bill):
+        if isinstance(Coin_or_Bill, Coin_Bill):
+            if Coin_or_Bill.get_waluta() in self.__curr:
+                self.__Money_list.append(Coin_or_Bill)
             else:
                 raise NieznanaWalutaException()
         else:
             print('Przeslany obiekt nie jest monetą')
-    def lacznaSuma(self):
+
+    def Sum(self):
         sum_ = 0
-        for x in self.__lista:
-            sum_ = sum_ + x.get_wartosc()
+        for x in self.__Money_list:
+            sum_ = sum_ + x.get_value()
         return Decimal(sum_)
 
-    def zwrocNominal(self, val):
-        for x in self.__lista:
-            if x.get_wartosc() == Decimal(val):
-                self.__lista.remove(x)
+    def return_Nominal(self, val):
+        for x in self.__Money_list:
+            if x.get_value() == Decimal(val):
+                self.__Money_list.remove(x)
                 return x
-    def zwrocliste(self):
-        return self.__lista
+
+    def return_list(self):
+        return self.__Money_list
+
 
 getcontext().prec = 4
 
 tmp_list1 = []
 tmp_list2 = []
-l = [random.choice(listadowzwolonych) for x in range(100)]  # Randomowa lista nominalow znajdujacych sie w biletomacie
-Biletomat = PrzechowywaczMonet('PLN',tmp_list1)
-for i in l:
-    Biletomat.dodajMonete(Moneta(i))
-print(Biletomat.lacznaSuma())
+random_generated_list_of_coins_bills = [random.choice(allowed_coins_bills) for x in
+                                        range(100)]  # Randomowa lista nominalow znajdujacych sie w biletomacie
 
-WrzuconeMonety = PrzechowywaczMonet('PLN',tmp_list2)
+Biletomat = Money_Storage('PLN', tmp_list1)
+for i in random_generated_list_of_coins_bills:
+    Biletomat.add_Coin_or_Bill(Coin_Bill(i))
+print(Biletomat.Sum())
 
+WrzuconeMonety = Money_Storage('PLN', tmp_list2)
 cwd = os.getcwd()
 price_20_minutes = 4
 price_40_minutes = 7
@@ -146,65 +154,55 @@ class my_ticket:
             return
         self.ticket_counter.set(self.ticket_counter.get() - 1)
 
-    def aktywuj(self):
+    def activate(self):
         self.Ticket_label.grid(row=self.row, column=self.col, sticky="NSEW", padx=2, pady=20)
         self.counter_disp.grid(row=self.row, column=2)
         self.ticket_add.grid(row=self.row, column=3, sticky="NSEW", padx=2, pady=50)
         self.ticket_substract.grid(row=self.row, column=1, sticky="NSEW", padx=2, pady=50)
 
-    def forget(self):
-        # self.Ticket_button.grid_forget()
-        self.counter_disp.grid_forget()
 
-    def grid_hide(widget):
-        widget._grid_info = widget.grid_info()
-        widget.grid_remove()
-
-    def grid_show(widget):
-        widget.grid(**widget._grid_info)
-
-def WydajReszte(Biletomat,reszta):
-    l =[]
-    l2 =[]
-    listamonet=Biletomat.zwrocliste()
+def returnChange(Biletomat, reszta):
+    l = []
+    l2 = []
+    listamonet = Biletomat.return_list()
     print("1:")
-    print(Biletomat.lacznaSuma())
+    print(Biletomat.Sum())
     for i in listamonet:
-        l.append(i.get_wartosc())
+        l.append(i.get_value())
     l.sort(reverse=True)
 
-    print(l)
     for i in l:
-        reszta=round(reszta,2)
-        i=round(i,2)
-        #print(i.compare(reszta))
-        if i <= reszta:
+        reszta = round(reszta, 2)
+        k = round(i, 2)
+        # print(i.compare(reszta))
+        if k <= reszta:
             print("printuje i")
             print(float(i))
-            reszta -=float(i)
+            reszta -= float(i)
             l2.append(i)
     if reszta == 0:
         print("Wydano reszte")
         for i in l2:
-            print(i)
-            print(Biletomat.zwrocNominal(i))
-        return True
+            o =[]
+            o.append(Biletomat.return_Nominal(i).get_value())
+            print(Biletomat.return_Nominal(i))
+        return True, o
     else:
         print("reszty nie wydano")
         return False
 
 
-def Bilety_Ulgowe(lista):
-    a, b, c, d, e, f = lista
-    widget_forget()
-    # window.geometry("500x500")
-    a.aktywuj()
-    b.aktywuj()
-    c.aktywuj()
-    tmp = [d, e, f, a, b, c]
+def Bilety_Ulgowe(list):
+    a, b, c, d, e, f = list  # Unpack list of tickets
+    widget_forget()  # forget previous buttons
+    a.activate()  # display tickets
+    b.activate()
+    c.activate()
+    tmp_list_tickets = [d, e, f, a, b,
+                        c]  # tmp list of tickets, which allows to send them to another function to proper count sum price
     normalne = Button(window,
                       text="Bilety Normalne",
-                      command=lambda: Bilety_Normalne(tmp),
+                      command=lambda: Bilety_Normalne(tmp_list_tickets),
                       bg="#231697",
                       borderwidth=5,
                       relief="raised",
@@ -214,7 +212,7 @@ def Bilety_Ulgowe(lista):
                       ).grid(row=3, column=0, sticky="NSEW", padx=2, pady=20)
     platnosc = Button(window,
                       text="Platnosc",
-                      command=lambda: Summary(lista, True),
+                      command=lambda: Summary(list, True),
                       bg="#231697",
                       borderwidth=5,
                       relief="raised",
@@ -224,18 +222,17 @@ def Bilety_Ulgowe(lista):
                       ).grid(row=3, column=1, sticky="NSEW", columnspan=3, padx=2, pady=20)
 
 
-def Bilety_Normalne(lista):
-    a, b, c, d, e, f = lista
-    widget_forget()
-    #  clear_widgets()
-    # window.geometry("500x500")
-    a.aktywuj()
-    b.aktywuj()
-    c.aktywuj()
-    tmp = [d, e, f, a, b, c]
+def Bilety_Normalne(list):
+    a, b, c, d, e, f = list  # Unpack list of tickets
+    widget_forget()  # forget previous buttons
+    a.activate()
+    b.activate()
+    c.activate()
+    tmp_list_tickets = [d, e, f, a, b,
+                        c]  # tmp_list_tickets list of tickets, which allows to send them to another function to proper count sum price
     ulgowe = Button(window,
                     text="Bilety Ulgowe",
-                    command=lambda: Bilety_Ulgowe(tmp),
+                    command=lambda: Bilety_Ulgowe(tmp_list_tickets),
                     bg="#231697",
                     borderwidth=5,
                     relief="raised",
@@ -245,7 +242,7 @@ def Bilety_Normalne(lista):
                     ).grid(row=3, column=0, sticky="NSEW", padx=2, pady=20)
     Platnosc = Button(window,
                       text="Platnosc",
-                      command=lambda: Summary(lista, False),
+                      command=lambda: Summary(list, False),
                       bg="#231697",
                       borderwidth=5,
                       relief="raised",
@@ -255,37 +252,39 @@ def Bilety_Normalne(lista):
                       ).grid(row=3, column=1, sticky="NSEW", columnspan=3, padx=2, pady=20)
 
 
-def widget_forget():
+def widget_forget():  # function to hide widgets
     for i in window.grid_slaves():
         i.grid_forget()
 
 
-def clear_widgets():
+def clear_widgets():  # function to destroy widgets
     for widget in window.winfo_children():
         widget.destroy()
 
-
 def Summary(lista, flaga):
-    global tmp
     coins_counter = IntVar()
     coins_counter.set(1)
 
-    def display_coins(czy_aktywny="normal"):
+    def display_coins(is_active="normal"):
+        change_info = StringVar()
+        change_info.set("lala")
+
         def onClick_addfun():
             coins_counter.set(coins_counter.get() + 1)
+
         def onClick_substract():
             if coins_counter.get() == 1:
                 return
             coins_counter.set(coins_counter.get() - 1)
 
         i = 0
-        for c in listadowzwolonych:
-            if(i<6):
-                colnum=3
-                rownum=i+1
+        for c in allowed_coins_bills:  # Display coins/bills buttons
+            if (i < 6):
+                colnum = 3
+                rownum = i + 1
             else:
-                colnum=5
-                rownum =i-5
+                colnum = 5
+                rownum = i - 5
             Button(window,
                    text="Wrzuć " + str(c) + " zł",
                    command=lambda c=c: Refresh_sum(float(c)),
@@ -294,7 +293,7 @@ def Summary(lista, flaga):
                    relief="raised",
                    font=myfont,
                    fg="white",
-                   state=czy_aktywny
+                   state=is_active
                    ).grid(row=rownum, column=colnum, sticky="NSEW", padx=2, pady=20)
             i += 1
 
@@ -305,43 +304,52 @@ def Summary(lista, flaga):
               relief="raised",
               font=myfont,
               fg="white",
-              ).grid(row=0,column=1, sticky="NSEW", padx=2, pady=20, columnspan=2)
+              ).grid(row=0, column=1, sticky="NSEW", padx=2, pady=20, columnspan=2)
         counter_money = Label(window,
-                                  textvariable=coins_counter,
-                                  relief="raised",
-                                  bg="#231697",
-                                  font=myfont,
-                                  fg="white"
-                                  ).grid(row=0,column=4, sticky="NSEW", padx=2, pady=20)
+                              textvariable=coins_counter,
+                              relief="raised",
+                              bg="#231697",
+                              font=myfont,
+                              fg="white"
+                              ).grid(row=0, column=4, sticky="NSEW", padx=2, pady=20)
         counter_money_add = Button(window,
-                                 text="+",
-                                 command= lambda: onClick_addfun(),
-                                 borderwidth=5,
-                                 relief="raised",
-                                 bg="#231697",
-                                 font=myfont,
-                                 fg="white",
-                                 activebackground='#3974BB',
+                                   text="+",
+                                   command=lambda: onClick_addfun(),
+                                   borderwidth=5,
+                                   relief="raised",
+                                   bg="#231697",
+                                   font=myfont,
+                                   fg="white",
+                                   activebackground='#3974BB',
 
-                                 ).grid(row=0,column=5, sticky="NSEW", padx=2, pady=20)
+                                   ).grid(row=0, column=5, sticky="NSEW", padx=2, pady=20)
         counter_money_substract = Button(window,
-                                       text="-",
-                                       bg="#231697",
-                                       borderwidth=5,
-                                       relief="raised",
-                                       font=myfont,
-                                       fg="white",
-                                       activebackground='#3974BB',
-                                       command=lambda: onClick_substract(),
-                                       ).grid(row=0,column=3, sticky="NSEW", padx=2, pady=20)
+                                         text="-",
+                                         bg="#231697",
+                                         borderwidth=5,
+                                         relief="raised",
+                                         font=myfont,
+                                         fg="white",
+                                         activebackground='#3974BB',
+                                         command=lambda: onClick_substract(),
+                                         ).grid(row=0, column=3, sticky="NSEW", padx=2, pady=20)
+        change_info = Label(window,
+                            textvariable=change_info,
+                            relief="raised",
+                            bg="#231697",
+                            font=myfont,
+                            fg="white",
+                            borderwidth=5,
+                            ).grid(row=5, column=1, sticky="NSEW", padx=2, pady=20, columnspan=2, rowspan=2)
+
 
     widget_forget()
     sum = DoubleVar()
-    test = StringVar()
-    reszta = StringVar()
-    reszta.set("0.00 zl")
-    t = 0
+    sum_string = StringVar()
+    change = StringVar()
+    change.set("0.00 zl")
     a, b, c, d, e, f = lista
+
     if (flaga == True):
         a = a.ticket_counter.get() * price_20_minutes / 2
         b = b.ticket_counter.get() * price_40_minutes / 2
@@ -349,7 +357,7 @@ def Summary(lista, flaga):
         d = d.ticket_counter.get() * price_20_minutes
         e = e.ticket_counter.get() * price_40_minutes
         f = f.ticket_counter.get() * price_60_minutes
-        tmp = [a, b, c, d, e, f]
+        tmp_list = [a, b, c, d, e, f]  # temporary list to store tickets and their prices
     elif (flaga == False):
         a = a.ticket_counter.get() * price_20_minutes
         b = b.ticket_counter.get() * price_40_minutes
@@ -357,64 +365,58 @@ def Summary(lista, flaga):
         d = d.ticket_counter.get() * price_20_minutes / 2
         e = e.ticket_counter.get() * price_40_minutes / 2
         f = f.ticket_counter.get() * price_60_minutes / 2
-        tmp = [a, b, c, d, e, f]
-    tmp_sum = WrzuconeMonety.lacznaSuma()
-    print("Laczna sumna tmp_Sum")
-    print(tmp_sum)
-    for i in tmp:
-        t = t + i
+        tmp_list = [a, b, c, d, e, f]  # temporary list to store tickets and their prices
+    tmp_sum = WrzuconeMonety.Sum()
+    tmp = 0
+    for i in tmp_list:
+        tmp = tmp + i
 
-    t = t - float(tmp_sum)
-    t2 = '{:.2f}'.format(t) + " zl"
-    test.set(t2)
+    tmp = tmp - float(tmp_sum)  # sum calculation
+    tmp2 = '{:.2f}'.format(tmp) + " zl"
+    sum_string.set(tmp2)
 
-    def Refresh_sum(value):
-        ilosc_wrzuconych=coins_counter.get()
+    def Refresh_sum(value):  # function to refresh sum after throw a coin into machine
+        coins_thrown_in_counter = coins_counter.get()
         coins_counter.set(1)
 
-        print(value)
-        for i in range(ilosc_wrzuconych):
-            WrzuconeMonety.dodajMonete(Moneta(value))
+        for i in range(coins_thrown_in_counter):
+            WrzuconeMonety.add_Coin_or_Bill(Coin_Bill(value))
 
-        print(WrzuconeMonety.lacznaSuma())
-
-        #print(tmp_sum)
-        sum_float = float(test.get().split(" ")[0]) - ilosc_wrzuconych*value
-        test.set('{:.2f}'.format(sum_float) + " zl")
+        sum_float = float(sum_string.get().split(" ")[0]) - coins_thrown_in_counter * value
+        sum_string.set('{:.2f}'.format(sum_float) + " zl")
         if (sum_float) <= 0:
-            display_coins("disabled")
-            test.set("0.00 zl")
+            display_coins("disabled")  # if sum <0 then no more coins are allowed to be thrown in
+            sum_string.set("0.00 zl")
             sum_float = sum_float * -1
-            reszta.set('{:.2f}'.format(sum_float) + " zl")
-            czy_wydano_reszte=WydajReszte(Biletomat,sum_float)
-            if czy_wydano_reszte == False:
+            change.set('{:.2f}'.format(sum_float) + " zl")
+            change_to_be_returned_bool, o = returnChange(Biletomat, sum_float)
+            print(o)
+            #global change_info
+        #    change_info.set("2222")
+            if change_to_be_returned_bool == False:
                 print("Tylko odliczona kwota")
-                for k in WrzuconeMonety.zwrocliste():
-                    WrzuconeMonety.zwrocNominal(k.get_wartosc())
-            #WydajReszte(Biletomat.zwrocliste(),sum_float)
+                for k in WrzuconeMonety.return_list():
+                    WrzuconeMonety.return_Nominal(k.get_value())
 
-          #  if (sum_float>Biletomat.lacznaSuma()):
-              #  print("nie da rady")
-
-    suma_display_text = Label(window,
-                              text="Pozostalo do zaplaty:",
-                              bg="#231697",
-                              borderwidth=5,
-                              relief="raised",
-                              font=myfont,
-                              fg="white",
-                              )
-    suma_display_text.grid(row=1, column=1, sticky="NSEW", columnspan=2, padx=2, pady=20)
-    suma_display = Label(window,
-                         textvariable=test,
-                         bg="#231697",
-                         borderwidth=5,
-                         relief="raised",
-                         font=myfont,
-                         fg="white",
-                         )
-    suma_display.grid(row=2, column=1, sticky="NSEW", columnspan=2, padx=2, pady=20)
-    reszta_display_text = Label(window,
+    sum_display_text = Label(window,
+                             text="Pozostalo do zaplaty:",
+                             bg="#231697",
+                             borderwidth=5,
+                             relief="raised",
+                             font=myfont,
+                             fg="white",
+                             )
+    sum_display_text.grid(row=1, column=1, sticky="NSEW", columnspan=2, padx=2, pady=20)
+    sum_display = Label(window,
+                        textvariable=sum_string,
+                        bg="#231697",
+                        borderwidth=5,
+                        relief="raised",
+                        font=myfont,
+                        fg="white",
+                        )
+    sum_display.grid(row=2, column=1, sticky="NSEW", columnspan=2, padx=2, pady=20)
+    change_display_text = Label(window,
                                 text="Reszta:",
                                 bg="#231697",
                                 borderwidth=5,
@@ -422,73 +424,79 @@ def Summary(lista, flaga):
                                 font=myfont,
                                 fg="white",
                                 )
-    reszta_display_text.grid(row=3, column=1, sticky="NSEW", columnspan=2, padx=2, pady=20)
-    reszta_display = Label(window,
-                           textvariable=reszta,
+    change_display_text.grid(row=3, column=1, sticky="NSEW", columnspan=2, padx=2, pady=20)
+    change_display = Label(window,
+                           textvariable=change,
                            bg="#231697",
                            borderwidth=5,
                            relief="raised",
                            font=myfont,
                            fg="white",
                            )
-    reszta_display.grid(row=4, column=1, sticky="NSEW", columnspan=2, padx=2, pady=20)
-    Dodaj_Bilet = Button(window,
-                         text="Dodaj Bilet",
-                         command=lambda: Start(listanormalne, listaulgowe),
-                         bg="#231697",
-                         borderwidth=5,
-                         relief="raised",
-                         font=myfont,
-                         fg="white",
-                         )
-    Dodaj_Bilet.grid(row=0, column=0, sticky="NSEW", padx=2, pady=20)
+    change_display.grid(row=4, column=1, sticky="NSEW", columnspan=2, padx=2, pady=20)
+    add_ticket = Button(window,
+                        text="Dodaj Bilet",
+                        command=lambda: Start(listanormalne, listaulgowe),
+                        bg="#231697",
+                        borderwidth=5,
+                        relief="raised",
+                        font=myfont,
+                        fg="white",
+                        )
+    add_ticket.grid(row=0, column=0, sticky="NSEW", padx=2, pady=20)
+    add_ticket = Button(window,
+                        text="Zacznij od nowa",
+                        command=lambda: Restart(),
+                        bg="#231697",
+                        borderwidth=5,
+                        relief="raised",
+                        font=myfont,
+                        fg="white",
+                        )
+    add_ticket.grid(row=1, column=0, sticky="NSEW", padx=2, pady=20)
 
     display_coins()
-    print(sum)
 
 
 def Start(listanormalne, listaulgowe):
     widget_forget()
-    wybor_biletu_label = Label(window,
-                               text="Wybierz rodzaj biletu:",
-                               borderwidth=5,
-                               relief="raised",
-                               bg="#140787",
-                               font=myfont,
-                               fg="white",
-                               activebackground='#3974BB',
-                               ).grid(row=0, column=1, sticky="NSEW", columnspan=2, padx=20, pady=35)
+    choose_ticket_label = Label(window,
+                                text="Wybierz rodzaj biletu:",
+                                borderwidth=5,
+                                relief="raised",
+                                bg="#140787",
+                                font=myfont,
+                                fg="white",
+                                activebackground='#3974BB',
+                                ).grid(row=0, column=1, sticky="NSEW", columnspan=2, padx=20, pady=35)
 
-    button_bilet_normalny = Button(window,
-                                   text="Bilet Normalny",
-                                   command=lambda: Bilety_Normalne(listanormalne),
-                                   borderwidth=5,
-                                   relief="raised",
-                                   bg="#231697",
-                                   font=myfont,
-                                   fg="white",
-                                   activebackground='#3974BB',
-                                   ).grid(row=1, column=1, sticky="NSEW", padx=20, pady=35)
-    button_bilet_ulgowy = Button(window,
-                                 text="Bilet Ulgowy",
-                                 command=lambda: Bilety_Ulgowe(listaulgowe),
-                                 borderwidth=5,
-                                 relief="raised",
-                                 bg="#231697",
-                                 font=myfont,
-                                 fg="white",
-                                 activebackground='#3974BB',
-                                 ).grid(row=1, column=2, sticky="NSEW", padx=20, pady=35)
+    button_normal_ticket = Button(window,
+                                  text="Bilet Normalny",
+                                  command=lambda: Bilety_Normalne(listanormalne),
+                                  borderwidth=5,
+                                  relief="raised",
+                                  bg="#231697",
+                                  font=myfont,
+                                  fg="white",
+                                  activebackground='#3974BB',
+                                  ).grid(row=1, column=1, sticky="NSEW", padx=20, pady=35)
+    button_halfprice_ticket = Button(window,
+                                     text="Bilet Ulgowy",
+                                     command=lambda: Bilety_Ulgowe(listaulgowe),
+                                     borderwidth=5,
+                                     relief="raised",
+                                     bg="#231697",
+                                     font=myfont,
+                                     fg="white",
+                                     activebackground='#3974BB',
+                                     ).grid(row=1, column=2, sticky="NSEW", padx=20, pady=35)
 
 
-# Set the geometry of the Tkinter frame
 window.geometry("850x650")
 window.configure(background="#231697")
 # window.resizable(False,False)
 # window.iconbitmap("C:\\Users\\RXKW46\\Documents\\JS\\ikona.ico")
 # window.iconbitmap("ikona.ico")
-print("tst")
-print(cwd)
 window.title("Biletomat MPK")
 myfont = ("Rubik", 15)
 
@@ -540,6 +548,7 @@ Start(listanormalne, listaulgowe)
 
 
 def Restart():
+    WrzuconeMonety = Money_Storage('PLN', [])
     listanormalne, listaulgowe = config()
     Start(listanormalne, listaulgowe)
 

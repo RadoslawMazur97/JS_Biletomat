@@ -9,6 +9,16 @@ import random
 
 window = Tk()
 myfont = ("Rubik", 15)
+#filename = PhotoImage(file="C:\\Users\\RXKW46\\Documents\\JS\\tlo2.png")
+#window.iconbitmap("C:\\Users\\RXKW46\\Documents\\JS\\ikona.ico")
+# background_label = Label(top, image=filename)
+#label1 = Label(window, image=filename)
+#label1.place(x=0, y=0)
+price_20_minutes = 4
+price_40_minutes = 7
+price_60_minutes = 8
+getcontext().prec = 4
+allowed_coins_bills = [0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1, 2, 5, 10, 20, 50]
 
 
 class ZlyNominalExcepion(Exception):
@@ -126,6 +136,8 @@ class my_ticket:
                                        activebackground='#3974BB',
                                        command=self.onClick_substract,
                                        )
+    def get_name(self):
+        return self.name
 
     def onClick_addfun(self, event=None):
         self.ticket_counter.set(self.ticket_counter.get() + 1)
@@ -142,11 +154,6 @@ class my_ticket:
         self.ticket_substract.grid(row=self.row, column=1, sticky="NSEW", padx=2, pady=50)
 
 
-price_20_minutes = 4
-price_40_minutes = 7
-price_60_minutes = 8
-getcontext().prec = 4
-allowed_coins_bills = [0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1, 2, 5, 10, 20, 50]
 
 
 def config():
@@ -178,7 +185,6 @@ def config():
     Bilet20min_ulg = my_ticket("Bilet 20 minutowy\n" + '{:.2f}'.format(price_20_minutes / 2) + "zł", 0, 0, )
     Bilet40min_ulg = my_ticket("Bilet 40 minutowy\n" + '{:.2f}'.format(price_40_minutes / 2) + "zł", 1, 0, )
     Bilet60min_ulg = my_ticket("Bilet 60 minutowy\n" + '{:.2f}'.format(price_60_minutes / 2) + "zł", 2, 0, )
-    # listanormalne = [Bilet20min, Bilet40min, Bilet60min, Bilet20min_ulg, Bilet40min_ulg, Bilet60min_ulg]
     return [Bilet20min, Bilet40min, Bilet60min, Bilet20min_ulg, Bilet40min_ulg, Bilet60min_ulg], [Bilet20min_ulg,
                                                                                                   Bilet40min_ulg,
                                                                                                   Bilet60min_ulg,
@@ -255,7 +261,7 @@ def wyswietnormalne(list, tmp_list_tickets):
 
 
 def Bilety_Normalne(list):
-    a, b, c, d, e, f, *_ = list  # Unpack list of tickets
+    a, b, c, d, e, f = list  # Unpack list of tickets
     widget_forget()  # forget previous buttons
     a.activate()
     b.activate()
@@ -323,28 +329,32 @@ def returnChange(Biletomat, reszta):
     for i in listamonet:
         l.append(i.get_value())
     l.sort(reverse=True)
+    print("printuje reszte")
+    print(reszta)
+    r = round(reszta, 2)
+    if r == 0:
+        print("wchodze tu")
+        return True, [0]
 
     for i in l:
-        reszta = round(reszta, 2)
         k = round(i, 2)
-        # print(i.compare(reszta))
-        if k <= reszta:
-            print("printuje i")
-            print(float(i))
-            reszta -= float(i)
+        r=round(r,2)
+        if k <= r:
+            r -= float(k)
             l2.append(i)
-    if reszta == 0:
-        print("Wydano reszte")
-        for i in l2:
-            o.append(Biletomat.return_Nominal(i).get_value())
-           # print(Biletomat.return_Nominal(i).get_value())
-        return True, o
+            if r == 0:
+                print("Wydano reszte")
+                for i in l2:
+                    o.append(Biletomat.return_Nominal(i).get_value())
+                print(Biletomat.Sum())
+                return True, o
     else:
         print("reszty nie wydano")
-        return False
+        return False, []
 
 
-def Refresh_sum(value, coins_counter, sum_string, change):  # function to refresh sum after throw a coin into machine
+def Refresh_sum(value, coins_counter, sum_string, change,dictionary):  # function to refresh sum after throw a coin into machine
+    print(dictionary)
     coins_thrown_in_counter = coins_counter.get()
     coins_counter.set(1)
     for i in range(coins_thrown_in_counter):
@@ -352,31 +362,49 @@ def Refresh_sum(value, coins_counter, sum_string, change):  # function to refres
     sum_float = float(sum_string.get().split(" ")[0]) - coins_thrown_in_counter * value
 
     sum_string.set('{:.2f}'.format(sum_float) + " zl")
-    if (sum_float) <= 0:
-        display_coins(sum_string, change, "disabled")  # if sum <0 then no more coins are allowed to be thrown in
+    if sum_float <= 0:
+        display_coins(sum_string, change, dictionary,"disabled")  # if sum <0 then no more coins are allowed to be thrown in
         sum_string.set("0.00 zl")
-        sum_float = sum_float * -1
+        if sum_float < 0:
+            sum_float = sum_float * -1
         change.set('{:.2f}'.format(sum_float) + " zl")
         change_to_be_returned_bool, w = returnChange(Biletomat, sum_float)
+        print(change_to_be_returned_bool)
+        if w == [] and change_to_be_returned_bool == False:
+            l = WrzuconeMonety.return_list()
+            for i in l:
+                w.append(i.get_value())
 
-        print(w)
-        finish(w)
-        # global change_info
-        #    change_info.set("2222")
-        if change_to_be_returned_bool == False:
-            print("Tylko odliczona kwota")
-            for k in WrzuconeMonety.return_list():
-                WrzuconeMonety.return_Nominal(k.get_value())
-def finish(text):
-    tmp =[]
-    l = "Wydano Reszte: "
-    change_info_text = StringVar()
+        finish(change_to_be_returned_bool, w,dictionary)
+        Summary_display(sum_string, change,"disabled")
+
+
+def finish(change_to_be_returned_bool, text,dictionary):
+    if change_to_be_returned_bool == True:
+        t = "Wydano reszte:\n "
+        l = WrzuconeMonety.return_list()
+        for k in l:
+            Biletomat.add_Coin_or_Bill(k)
+    elif change_to_be_returned_bool == False:
+        t = "Tylko odliczona kwota, zwrocono : \n"
+    tmp2 = []
     for k in text:
-        tmp.append(str(k)+" zl")
-    tmp.insert(0,"Wydano reszte:\n")
-   # tmp.insert(0,"Wydano reszte: ")
-    print(l)
-    change_info_text.set(tmp)
+        tmp2.append(str(float(k)) + " zl ")
+    print(tmp2)
+    tmp = ' '.join(item for item in tmp2)
+    change_info_text = StringVar()
+    change_info_text.set(t + tmp)
+    purchased_tickets_text = StringVar()
+
+    print(Biletomat.Sum())
+    d=copy.deepcopy(dictionary)
+    for key, value in d.items():
+        if value == 0:
+            dictionary.pop(key)
+            continue
+    t3 ='\n'.join(str(value)+ "x"+key  for key,value in dictionary.items())
+    purchased_tickets_text.set("Zakupione bilety:\n" +t3)
+    print(dictionary)
     change_info = Label(window,
                         textvariable=change_info_text,
                         relief="raised",
@@ -385,8 +413,17 @@ def finish(text):
                         fg="white",
                         borderwidth=5,
                         ).grid(row=5, column=1, sticky="NSEW", padx=2, pady=20, columnspan=2, rowspan=2)
+    Purchased_tickets = Label(window,
+                        textvariable=purchased_tickets_text,
+                        relief="raised",
+                        bg="#231697",
+                        font=myfont,
+                        fg="white",
+                        borderwidth=5,
+                        ).grid(row=2, column=0, sticky="NSEW", padx=2, pady=20,  rowspan=5)
 
-def display_coins(sum_string, change, is_active="normal"):
+
+def display_coins(sum_string, change,dictionary,is_active="normal"):
     coins_counter = IntVar()
     coins_counter.set(1)
     change_info = StringVar()
@@ -410,7 +447,7 @@ def display_coins(sum_string, change, is_active="normal"):
             rownum = i - 5
         Button(window,
                text="Wrzuć " + str(c) + " zł",
-               command=lambda c=c: Refresh_sum(float(c), coins_counter, sum_string, change),
+               command=lambda c=c: Refresh_sum(float(c), coins_counter, sum_string, change,dictionary),
                bg="#231697",
                borderwidth=5,
                relief="raised",
@@ -455,17 +492,9 @@ def display_coins(sum_string, change, is_active="normal"):
                                      activebackground='#3974BB',
                                      command=lambda: onClick_substract(),
                                      ).grid(row=0, column=3, sticky="NSEW", padx=2, pady=20)
-    #change_info = Label(window,
-                  #      textvariable=change_info,
-                  #      relief="raised",
-                  #      bg="#231697",
-                  #      font=myfont,
-                 #       fg="white",
-                #        borderwidth=5,
-                 #       ).grid(row=5, column=1, sticky="NSEW", padx=2, pady=20, columnspan=2, rowspan=2)
 
 
-def Summary_display(sum_string, change):
+def Summary_display(sum_string, change,is_active="normal"):
     sum_display_text = Label(window,
                              text="Pozostalo do zaplaty:",
                              bg="#231697",
@@ -510,6 +539,7 @@ def Summary_display(sum_string, change):
                         relief="raised",
                         font=myfont,
                         fg="white",
+                        state=is_active
                         )
     add_ticket.grid(row=0, column=0, sticky="NSEW", padx=2, pady=20)
     add_ticket = Button(window,
@@ -530,7 +560,7 @@ def Summary(lista, flaga):
     coins_counter = IntVar()
     coins_counter.set(1)
     widget_forget()
-    a, b, c, d, e, f, *_ = lista
+    a, b, c, d, e, f = lista
     sum = DoubleVar()
     sum_string = StringVar()
     change = StringVar()
@@ -552,6 +582,9 @@ def Summary(lista, flaga):
         e = e.ticket_counter.get() * price_40_minutes / 2
         f = f.ticket_counter.get() * price_60_minutes / 2
         tmp_list = [a, b, c, d, e, f]  # temporary list to store tickets and their prices
+    ticket_name_price_dictionary ={}
+    for i in lista:
+        ticket_name_price_dictionary[i.get_name()] = i.ticket_counter.get()
     tmp_sum = WrzuconeMonety.Sum()
     tmp = 0
     for i in tmp_list:
@@ -560,17 +593,17 @@ def Summary(lista, flaga):
     tmp = tmp - float(tmp_sum)  # sum calculation
     tmp2 = '{:.2f}'.format(tmp) + " zl"
     sum_string.set(tmp2)
-    display_coins(sum_string, change)
+    display_coins(sum_string, change,ticket_name_price_dictionary)
     Summary_display(sum_string, change)
 
 
 tmp_list2 = []
 tmp_list1 = []
 random_generated_list_of_coins_bills = [random.choice(allowed_coins_bills) for x in
-                                        range(100)]  # Randomowa lista nominalow znajdujacych sie w biletomacie
+                                                                        range(100)]  # Randomowa lista nominalow znajdujacych sie w biletomacie
 Biletomat = Money_Storage('PLN', tmp_list1)
 for i in random_generated_list_of_coins_bills:
-    Biletomat.add_Coin_or_Bill(Coin_Bill(i))
+  Biletomat.add_Coin_or_Bill(Coin_Bill(i))
 print(Biletomat.Sum())
 
 WrzuconeMonety = Money_Storage('PLN', tmp_list2)
@@ -582,7 +615,6 @@ def main():
     window.geometry("850x650")
     window.configure(background="#231697")
     # window.resizable(False,False)
-    # window.iconbitmap("C:\\Users\\RXKW46\\Documents\\JS\\ikona.ico")
     # window.iconbitmap("ikona.ico")
     window.title("Biletomat MPK")
     Start(listanormalne, listaulgowe)

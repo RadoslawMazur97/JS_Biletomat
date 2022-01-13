@@ -1,11 +1,12 @@
 import logic
 import interface
+import sys
 
 
 
-print("zaimportowane")
 
 if __name__ == "__main__":
-    logic.main()
-else:
-    print("program zle uruchomioned")  
+    try:
+        logic.main()
+    except:
+        sys.exit("Blad z uruchomieniem")

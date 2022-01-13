@@ -109,7 +109,6 @@ def Start(listanormalne, listaulgowe):
 
 
 def display_coins(sum_string, change,dictionary,is_active="normal"):
-    print("jestemtu")
     coins_counter = IntVar()
     coins_counter.set(1)
     #change_info = StringVar()

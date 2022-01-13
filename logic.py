@@ -29,6 +29,13 @@ class ZlyNominalExcepion(Exception):
     def __str__(self):
         return repr(self.value)
 
+class NiepoprawnaIloscMonet(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)        
+
 
 class NieznanaWalutaException(Exception):
     def __init__(self, value):
@@ -96,6 +103,7 @@ class my_ticket:
 
     def __init__(self, bilet_name, my_row, my_col):
         self.ticket_counter = IntVar()
+        self.ticket_counter.set(0)
         self.name = bilet_name
         self.row = my_row
         self.col = my_col
@@ -236,16 +244,13 @@ def returnChange(Biletomat, reszta):
     l2 = []
     o = []
     listamonet = Biletomat.return_list()
-    print("1:")
-    print(Biletomat.Sum())
     for i in listamonet:
         l.append(i.get_value())
     l.sort(reverse=True)
-    print("printuje reszte")
-    print(reszta)
+
     r = round(reszta, 2)
     if r == 0:
-        print("wchodze tu")
+
         return True, [0]
 
     for i in l:
@@ -255,36 +260,32 @@ def returnChange(Biletomat, reszta):
             r -= float(k)
             l2.append(i)
             if r == 0:
-                print("Wydano reszte")
                 for i in l2:
                     o.append(Biletomat.return_Nominal(i).get_value())
-                print(Biletomat.Sum())
                 return True, o
     else:
-        print("reszty nie wydano")
         return False, []
 
 
 def Refresh_sum(value, coins_counter, sum_string, change,dictionary):  # function to refresh sum after throw a coin into machine
-    print("jestem w refesz szum")
-    print(dictionary)
+    if not (isinstance(coins_counter.get(),int)) or (coins_counter.get() < 1):
+        raise NiepoprawnaIloscMonet('Niepoprawna ilosc monet')
     coins_thrown_in_counter = coins_counter.get()
     coins_counter.set(1)
     for i in range(coins_thrown_in_counter):
         WrzuconeMonety.add_Coin_or_Bill(Coin_Bill(value))
     sum_float = float(sum_string.get().split(" ")[0]) - coins_thrown_in_counter * value
-
+    global sum_test_purposes
+    sum_test_purposes = sum_float
+#
     sum_string.set('{:.2f}'.format(sum_float) + " zl")
     if sum_float <= 0:
         interface.display_coins(sum_string, change, dictionary,"disabled")  # if sum <=0 then no more coins are allowed to be thrown in
         sum_string.set("0.00 zl")
         if sum_float < 0:
             sum_float = sum_float * -1
-            print("sumFloat")
-            print(sum_float)
         change.set('{:.2f}'.format(sum_float) + " zl")
         change_to_be_returned_bool, w = returnChange(Biletomat, sum_float)
-        print(change_to_be_returned_bool)
         if w == [] and change_to_be_returned_bool == False:
             l = WrzuconeMonety.return_list()
             for i in l:
@@ -305,13 +306,11 @@ def finish(change_to_be_returned_bool, text,dictionary):
     tmp2 = []
     for k in text:
         tmp2.append(str(float(k)) + " zl ")
-    print(tmp2)
     tmp = ' '.join(item for item in tmp2)
     change_info_text = StringVar()
     change_info_text.set(t + tmp)
     purchased_tickets_text = StringVar()
 
-    print(Biletomat.Sum())
     d=copy.deepcopy(dictionary)
     for key, value in d.items():
         if value == 0:
@@ -319,7 +318,6 @@ def finish(change_to_be_returned_bool, text,dictionary):
             continue
     t3 ='\n'.join(str(value)+ "x"+key  for key,value in dictionary.items())
     purchased_tickets_text.set("Zakupione bilety:\n" +t3)
-    print(dictionary)
     change_info = Label(interface.window,
                         textvariable=change_info_text,
                         relief="raised",
@@ -372,16 +370,12 @@ def Summary(lista, flaga):
     for i in lista:
         ticket_name_price_dictionary[i.get_name()] = i.ticket_counter.get()
     tmp_sum = WrzuconeMonety.Sum()
-    print("printujetmp_sum")
-    print(tmp_sum)
-    print("printuje tmp1:")
     tmp = 0
-    print(tmp)
     for i in tmp_list:
         tmp = tmp + i
+   
     tmp = tmp - float(tmp_sum)  # sum calculation
-    print("printujetmp2")
-    print(tmp)
+
     tmp2 = '{:.2f}'.format(tmp) + " zl"
     global sum_test_purposes
     sum_test_purposes=tmp
@@ -397,7 +391,6 @@ random_generated_list_of_coins_bills = [random.choice(allowed_coins_bills) for x
 Biletomat = Money_Storage('PLN', tmp_list1)
 for i in random_generated_list_of_coins_bills:
   Biletomat.add_Coin_or_Bill(Coin_Bill(i))
-print(Biletomat.Sum())
 
 WrzuconeMonety = Money_Storage('PLN', tmp_list2)
 

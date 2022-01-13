@@ -9,13 +9,14 @@ import random
 import interface
 sum_test_purposes = 0
 
-#interface.window = Tk()
-#myfont = ("Rubik", 15)
-#filename = PhotoImage(file="C:\\Users\\RXKW46\\Documents\\JS\\tlo2.png")
-#interface.window.iconbitmap("C:\\Users\\RXKW46\\Documents\\JS\\ikona.ico")
-# background_label = Label(top, image=filename)
-#label1 = Label(interface.window, image=filename)
-#label1.place(x=0, y=0)
+try:
+    filename = PhotoImage(file="tlo2.png")
+    interface.window.iconbitmap("ikona.ico")
+    background_label = Label(interface.window, image=filename)
+    label1 = Label(interface.window, image=filename)
+    label1.place(x=0, y=0)
+except:
+    print("unable to load graphic")   
 price_20_minutes = 4
 price_40_minutes = 7
 price_60_minutes = 8
@@ -166,27 +167,9 @@ class my_ticket:
 
 
 def config():
-    Grid.rowconfigure(interface.window, 0, weight=1)
-    Grid.rowconfigure(interface.window, 1, weight=1)
-    Grid.rowconfigure(interface.window, 2, weight=1)
-    Grid.rowconfigure(interface.window, 3, weight=1)
-    Grid.rowconfigure(interface.window, 4, weight=1)
-    Grid.rowconfigure(interface.window, 5, weight=1)
-    Grid.rowconfigure(interface.window, 6, weight=1)
-    Grid.rowconfigure(interface.window, 7, weight=1)
-    Grid.rowconfigure(interface.window, 8, weight=1)
-    Grid.rowconfigure(interface.window, 9, weight=1)
-    Grid.rowconfigure(interface.window, 10, weight=1)
-    Grid.rowconfigure(interface.window, 11, weight=1)
-    Grid.rowconfigure(interface.window, 12, weight=1)
-
-    Grid.columnconfigure(interface.window, 0, weight=1)
-    Grid.columnconfigure(interface.window, 1, weight=1)
-    Grid.columnconfigure(interface.window, 2, weight=1)
-    Grid.columnconfigure(interface.window, 3, weight=1),
-    Grid.columnconfigure(interface.window, 4, weight=1),
-    Grid.columnconfigure(interface.window, 5, weight=1),
-    Grid.columnconfigure(interface.window, 6, weight=1),
+    for i in range(4):
+        Grid.rowconfigure(interface.window, i, weight=1)
+        Grid.columnconfigure(interface.window, i, weight=1)
 
     Bilet20min = my_ticket("Bilet 20 minutowy\n" + '{:.2f}'.format(price_20_minutes) + "zł", 0, 0, )
     Bilet40min = my_ticket("Bilet 40 minutowy\n" + '{:.2f}'.format(price_40_minutes) + "zł", 1, 0, )
@@ -398,7 +381,7 @@ listanormalne, listaulgowe = config()
 
 
 def main():
-    interface.window.geometry("850x650")
+    interface.window.geometry("950x750")
     interface.window.configure(background="#231697")
     # interface.window.resizable(False,False)
     # interface.window.iconbitmap("ikona.ico")

@@ -130,14 +130,15 @@ def display_coins(sum_string, change,dictionary,is_active="normal"):
             colnum = 5
             rownum = i - 5
         Button(window,
-               text="Wrzuć " + str(c) + " zł",
-               command=lambda c=c: logic.Refresh_sum(float(c), coins_counter, sum_string, change,dictionary),
-               bg="#231697",
-               borderwidth=5,
-               relief="raised",
-               font=myfont,
-               fg="white",
-               state=is_active
+                text="Wrzuć " + str(c) + " zł",
+                command=lambda c=c: logic.Refresh_sum(float(c), coins_counter, sum_string, change,dictionary),
+                bg="#231697",
+                borderwidth=5,
+                relief="raised",
+                font=myfont,
+                fg="white",
+                state=is_active,
+                activebackground='#3974BB',
                ).grid(row=rownum, column=colnum, sticky="NSEW", padx=2, pady=20)
         i += 1
 
@@ -152,9 +153,10 @@ def display_coins(sum_string, change,dictionary,is_active="normal"):
     counter_money = Label(window,
                           textvariable=coins_counter,
                           relief="raised",
+                          borderwidth=5,
                           bg="#231697",
                           font=myfont,
-                          fg="white"
+                          fg="white",
                           ).grid(row=0, column=4, sticky="NSEW", padx=2, pady=20)
     counter_money_add = Button(window,
                                text="+",
@@ -223,7 +225,8 @@ def Summary_display(sum_string, change,is_active="normal"):
                         relief="raised",
                         font=myfont,
                         fg="white",
-                        state=is_active
+                        state=is_active,
+                        activebackground='#3974BB',
                         )
     add_ticket.grid(row=0, column=0, sticky="NSEW", padx=2, pady=20)
     add_ticket = Button(window,
@@ -234,6 +237,7 @@ def Summary_display(sum_string, change,is_active="normal"):
                         relief="raised",
                         font=myfont,
                         fg="white",
+                        activebackground='#3974BB',
                         )
     add_ticket.grid(row=1, column=0, sticky="NSEW", padx=2, pady=20)
 

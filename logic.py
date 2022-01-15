@@ -4,9 +4,9 @@ from decimal import *
 import copy
 import random
 import interface
-sum_test_purposes = 0
+sum_test_purposes = 0 #variable for test purposes
 
-try:
+try: #Try to set the graphics as a background and icon file if not the app will run with navy blue colour.
     filename = PhotoImage(file="tlo2.png")
     interface.window.iconbitmap("ikona.ico")
     background_label = Label(interface.window, image=filename)

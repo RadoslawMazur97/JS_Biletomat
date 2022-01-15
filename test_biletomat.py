@@ -61,13 +61,6 @@ class TestTicketingSystem(unittest.TestCase):
          for i in listaulgowe:
              ticket_name_price_dictionary[i.get_name()] = i.ticket_counter.get()
          flag, w =logic.returnChange(Biletomat, 3)
-       #  logic.Summary(listaulgowe, True)  
-       #  logic.Refresh_sum(5,coins_counter,sum,change,ticket_name_price_dictionary)
-      #   total =0
-      #   for ele in range(0, len(w)):
-         #    total = total + w[ele]
-
-        # t1=float(total) -ticket_price 
 
          self.assertTrue(w)
 
@@ -119,11 +112,6 @@ class TestTicketingSystem(unittest.TestCase):
          sum.set(str(ticket_price)+" zl")
          logic.Bilety_Ulgowe(listaulgowe)
          ticket_name_price_dictionary ={}
-        # for i in listaulgowe:
-        #     ticket_name_price_dictionary[i.get_name()] = i.ticket_counter.get()
-       #  flag, w =logic.returnChange(Biletomat, 0)
-         #logic.Summary(listaulgowe, True)  
-        # logic.Refresh_sum(2,coins_counter,sum,change,ticket_name_price_dictionary)
          k=[]
          lista_tmp=WrzuconeMonety.return_list()
          total =0
@@ -216,4 +204,4 @@ class TestTicketingSystem(unittest.TestCase):
         ticket_price = a.ticket_counter.get()* logic.price_20_minutes/2 #+ b.ticket_counter.get()*logic.price_40_minutes/2
         sum.set(str(ticket_price)+" zl")
 
-        self.assertRaises(logic.NiepoprawnaIloscMonet, logic.Refresh_sum,2,coins_counter,sum,change,{})        
+        self.assertRaises(logic.NiepoprawnaIloscMonetException, logic.Refresh_sum,2,coins_counter,sum,change,{})        

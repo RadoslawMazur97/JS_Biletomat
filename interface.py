@@ -16,12 +16,8 @@ def widget_forget():  # function to hide widgets
         i.grid_forget()
 
 
-def clear_widgets():  # function to destroy widgets
-    for widget in window.winfo_children():
-        widget.destroy()
 
-
-def wyswietlulgowe(list, tmp_list_tickets):
+def wyswietlulgowe(list, tmp_list_tickets): #Display reduced tickets
     normalne = Button(window,
                       text="Bilety Normalne",
                       command=lambda: logic.Bilety_Normalne(tmp_list_tickets),
@@ -46,7 +42,7 @@ def wyswietlulgowe(list, tmp_list_tickets):
 
 
 
-def wyswietnormalne(list, tmp_list_tickets):
+def wyswietnormalne(list, tmp_list_tickets): #Display normal tickets
     ulgowe = Button(window,
                     text="Bilety Ulgowe",
                     command=lambda: logic.Bilety_Ulgowe(tmp_list_tickets),
@@ -71,7 +67,7 @@ def wyswietnormalne(list, tmp_list_tickets):
 
 
 
-def Start(listanormalne, listaulgowe):
+def Start(listanormalne, listaulgowe): #Display buttons which allows end user to select which tickets he/she wants to choose
     widget_forget()
     choose_ticket_label = Label(window,
                                 text="Wybierz rodzaj biletu:",
@@ -108,10 +104,9 @@ def Start(listanormalne, listaulgowe):
 
 
 
-def display_coins(sum_string, change,dictionary,is_active="normal"):
+def display_coins(sum_string, change,dictionary,is_active="normal"): #Display coins
     coins_counter = IntVar()
     coins_counter.set(1)
-    #change_info = StringVar()
 
     def onClick_addfun():
         coins_counter.set(coins_counter.get() + 1)

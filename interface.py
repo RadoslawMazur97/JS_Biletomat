@@ -2,8 +2,8 @@
 from tkinter import *
 from decimal import *
 import logic
-window = Tk()
-myfont = ("Rubik", 15) # Set the font
+window = Tk() #Tkinter
+myfont = ("Rubik", 15) # Set the font 
 
 
 def widget_forget():  # function to hide widgets

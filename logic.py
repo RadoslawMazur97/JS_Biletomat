@@ -30,7 +30,7 @@ class ZlyNominalExcepion(Exception):
     def __str__(self):
         return repr(self.value)
 
-class NiepoprawnaIloscMonet(Exception):
+class NiepoprawnaIloscMonetException(Exception):
     def __init__(self, value):
         self.value = value
 
@@ -245,7 +245,7 @@ def returnChange(Biletomat, reszta): #Function to return change
 
 def Refresh_sum(value, coins_counter, sum_string, change,dictionary):  # function to refresh sum after throw a coin into machine
     if not (isinstance(coins_counter.get(),int)) or (coins_counter.get() < 1): #validate if someone is trying to put negative or noninterger number of coins
-        raise NiepoprawnaIloscMonet('Niepoprawna ilosc monet')
+        raise NiepoprawnaIloscMonetException('Niepoprawna ilosc monet')
 
     coins_thrown_in_counter = coins_counter.get()
     coins_counter.set(1) #set the coins counter to 1 after thrown some coins/bills

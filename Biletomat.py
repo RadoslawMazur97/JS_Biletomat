@@ -1,5 +1,4 @@
 import logic
-import interface
 import sys
 
 

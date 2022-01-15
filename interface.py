@@ -1,11 +1,6 @@
 # Import the required Libraries
 from tkinter import *
-import time
-import os
-import sys
 from decimal import *
-import copy
-import random
 import logic
 window = Tk()
 myfont = ("Rubik", 15)

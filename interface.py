@@ -6,13 +6,15 @@ window = Tk() #Tkinter
 myfont = ("Rubik", 15) # Set the font 
 
 
-def widget_forget():  # function to hide widgets
+def widget_forget():
+    '''function to hide widgets'''
     for i in window.grid_slaves():
         i.grid_forget()
 
 
 
-def wyswietlulgowe(list, tmp_list_tickets): #Display reduced tickets
+def wyswietlulgowe(list, tmp_list_tickets):
+    '''display reduced tikets'''
     normalne = Button(window,
                       text="Bilety Normalne",
                       command=lambda: logic.Bilety_Normalne(tmp_list_tickets),
@@ -37,7 +39,8 @@ def wyswietlulgowe(list, tmp_list_tickets): #Display reduced tickets
 
 
 
-def wyswietnormalne(list, tmp_list_tickets): #Display normal tickets
+def wyswietnormalne(list, tmp_list_tickets):
+    '''Display normal tickets'''
     ulgowe = Button(window,
                     text="Bilety Ulgowe",
                     command=lambda: logic.Bilety_Ulgowe(tmp_list_tickets),
@@ -62,7 +65,8 @@ def wyswietnormalne(list, tmp_list_tickets): #Display normal tickets
 
 
 
-def Start(listanormalne, listaulgowe): #Display buttons which allows end user to select which tickets he/she wants to choose
+def Start(listanormalne, listaulgowe):
+    '''Display buttons which allows end user to select which tickets he/she wants to choose'''
     widget_forget()
     choose_ticket_label = Label(window,
                                 text="Wybierz rodzaj biletu:",
@@ -99,7 +103,8 @@ def Start(listanormalne, listaulgowe): #Display buttons which allows end user to
 
 
 
-def display_coins(sum_string, change,dictionary,is_active="normal"): #Display coins
+def display_coins(sum_string, change,dictionary,is_active="normal"):
+    '''Display Coins'''
     coins_counter = IntVar()
     coins_counter.set(1)
 
@@ -171,6 +176,7 @@ def display_coins(sum_string, change,dictionary,is_active="normal"): #Display co
 
 
 def Summary_display(sum_string, change,is_active="normal"):
+    '''Display the sum, change, dodaj bilet button and zacznij od nowa button'''
     sum_display_text = Label(window,
                              text="Pozostalo do zaplaty:",
                              bg="#231697",

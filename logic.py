@@ -167,6 +167,7 @@ class my_ticket: #Class responsible for tikcet creation and dispaly
 
 
 def config(): #config function
+    '''Config function, renposible for setting grid, create tickets and return them as 2 lists'''
     for i in range(4): #Set grid config to proper display
         Grid.rowconfigure(interface.window, i, weight=1) 
         Grid.columnconfigure(interface.window, i, weight=1)
@@ -186,6 +187,7 @@ def config(): #config function
 
 
 def Bilety_Ulgowe(list):
+    '''function which is unpacking list of reduced tickets and activate(display)them'''
     a, b, c, d, e, f = list  # Unpack list of tickets
     interface.widget_forget()  # forget previous buttons
     a.activate()  # display tickets
@@ -198,6 +200,7 @@ def Bilety_Ulgowe(list):
 
 
 def Bilety_Normalne(list):
+    '''function which is unpacking list of normal tickets and activate(display)them'''
     a, b, c, d, e, f = list  # Unpack list of tickets
     interface.widget_forget()  # forget previous buttons
     a.activate()
@@ -209,6 +212,7 @@ def Bilety_Normalne(list):
 
 
 def Restart(): #Restart program, new customer
+    '''Restart program, new customer, called after user click zacznij od Nowa'''
     interface.widget_forget()
     temp = WrzuconeMonety.return_list()
     l =[(i.get_value()) for i in temp]
@@ -218,6 +222,7 @@ def Restart(): #Restart program, new customer
 
 
 def returnChange(Biletomat, reszta): #Function to return change
+    '''Function responsible for returinng the change'''
     l2 = [] #temporary list to store all the coins which user put to machine
     o = [] #list to store value of the coins from l2
     listamonet = Biletomat.return_list()
@@ -243,7 +248,8 @@ def returnChange(Biletomat, reszta): #Function to return change
         return False, []
 
 
-def Refresh_sum(value, coins_counter, sum_string, change,dictionary):  # function to refresh sum after throw a coin into machine
+def Refresh_sum(value, coins_counter, sum_string, change,dictionary): 
+    '''function to refresh sum after throw a coin into machine'''
     if not (isinstance(coins_counter.get(),int)) or (coins_counter.get() < 1): #validate if someone is trying to put negative or noninterger number of coins
         raise NiepoprawnaIloscMonetException('Niepoprawna ilosc monet')
 
@@ -274,6 +280,7 @@ def Refresh_sum(value, coins_counter, sum_string, change,dictionary):  # functio
 
 
 def finish(change_to_be_returned_bool, text,dictionary):
+    '''Finish function, which displays info if change has been returned and purcahsed tickets or if it was impossible it return all thrown coins/bills'''
     if change_to_be_returned_bool == True:
         t = "Wydano reszte:\n "
         [Biletomat.add_Coin_or_Bill(k) for k in WrzuconeMonety.return_list()]
@@ -316,6 +323,7 @@ def finish(change_to_be_returned_bool, text,dictionary):
 
 
 def Summary(lista, flaga):
+    '''Summary of purchased tickets'''
     change_info = StringVar()
     change_info.set("0.00 zl")
     coins_counter = IntVar()
@@ -373,7 +381,7 @@ listanormalne, listaulgowe = config()
 
 
 def main():
-
+    '''Main function set window geometry, background, title and start the program'''
     interface.window.geometry("950x750")
     interface.window.configure(background="#231697")
     interface.window.title("Biletomat MPK")

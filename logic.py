@@ -47,30 +47,37 @@ class NieznanaWalutaException(Exception):
 
 
 class Coin_Bill:
+    '''Class reponsible for Coin/Bill object creation'''
     __currency = 'PLN'
     __value = 0
 
     def __init__(self, val):
+        '''Constructor'''
         if val in allowed_coins_bills:
             self.__value = Decimal(val)
         else:
             raise ZlyNominalExcepion('Brak takiego nominalu')
 
     def get_value(self):
+        '''return value of coin'''
         return self.__value
 
     def get_waluta(self):
+        '''return coin currency'''
         return self.__currency
 
 
 class Money_Storage:
+    '''Class which stores Coins/Bills'''
     __Money_list = []
 
     def __init__(self, currency, l):
+        '''Constructor'''
         self.__curr = currency
         self.__Money_list = l
 
     def add_Coin_or_Bill(self, Coin_or_Bill):
+        '''Add Coin or Bill to storage'''
         if isinstance(Coin_or_Bill, Coin_Bill):
             if Coin_or_Bill.get_waluta() in self.__curr:
                 self.__Money_list.append(Coin_or_Bill)
@@ -80,22 +87,26 @@ class Money_Storage:
             print('Przeslany obiekt nie jest monetą')
 
     def Sum(self):
+        '''Return Sum of coins/bill which Storage contain'''
         sum_ = 0
         for x in self.__Money_list:
             sum_ = sum_ + x.get_value()
         return Decimal(sum_)
 
     def return_Nominal(self, val):
+        '''return the Coin/Bill from the Storage'''
         for x in self.__Money_list:
             if x.get_value() == Decimal(val):
                 self.__Money_list.remove(x)
                 return x
 
     def return_list(self):
+        '''Returns the list of the coins/bill'''
         return self.__Money_list
 
 
-class my_ticket: #Class responsible for tikcet creation and dispaly
+class my_ticket:
+    '''Class responsible for tikcet creation and dispaly'''
     Ticket_label = Label
     counter_disp = Label
     ticket_add = Button
@@ -103,6 +114,7 @@ class my_ticket: #Class responsible for tikcet creation and dispaly
     ticket_counter = IntVar()
 
     def __init__(self, bilet_name, my_row, my_col):
+        '''Constructor'''
         self.ticket_counter = IntVar()
         self.ticket_counter.set(0)
         self.name = bilet_name
@@ -147,17 +159,21 @@ class my_ticket: #Class responsible for tikcet creation and dispaly
                                        command=self.onClick_substract,
                                        )
     def get_name(self):
+        '''Return name of the ticket'''
         return self.name
 
     def onClick_addfun(self, event=None):
+        '''Increment tickets count'''
         self.ticket_counter.set(self.ticket_counter.get() + 1)
 
     def onClick_substract(self, event=None):
+        '''Decrement tickets count'''
         if self.ticket_counter.get() == 0:
             return
         self.ticket_counter.set(self.ticket_counter.get() - 1)
 
-    def activate(self): #Display tickets
+    def activate(self):
+        '''Display Tickets'''
         self.Ticket_label.grid(row=self.row, column=self.col, sticky="NSEW", padx=2, pady=20)
         self.counter_disp.grid(row=self.row, column=2)
         self.ticket_add.grid(row=self.row, column=3, sticky="NSEW", padx=2, pady=50)
